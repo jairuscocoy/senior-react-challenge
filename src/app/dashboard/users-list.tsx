@@ -1,19 +1,34 @@
 "use client";
 
 import { useUsers } from "@/hooks/queries/useUsers";
+import useDebounce from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchUsers } from "./queries/useSearchUsers";
+import { TUser } from "@/types/user-types";
 export default function UsersList({ page }: { page: number }) {
   const router = useRouter();
-  const { data, isLoading, isSuccess } = useUsers(page);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [filterGender, setFilterGender] = useState<string>("");
+  const searchResults = useSearchUsers(debouncedSearch, page);
+  const allUsersResults = useUsers(page);
+  const { data, isLoading, isSuccess, isFetching } = debouncedSearch
+    ? searchResults
+    : allUsersResults;
 
+  // RESET TO PAGE 1 WHEN SEARCHING
+  useEffect(() => {
+    router.push(`/dashboard?page=1`);
+  }, [debouncedSearch, router]);
+
+  // FILTER GENDER
   const filteredData = useMemo(() => {
     if (!isSuccess || !data?.users) return [];
 
     if (!filterGender) return data.users;
 
-    return data.users.filter((user) => user.gender === filterGender);
+    return data.users.filter((user: TUser) => user.gender === filterGender);
   }, [data?.users, filterGender, isSuccess]);
 
   if (isLoading) return <p>Loading...</p>;
@@ -25,10 +40,15 @@ export default function UsersList({ page }: { page: number }) {
   };
 
   if (isLoading) return <p>Loading...</p>;
-
   return (
     <div>
-      <h1>Users</h1>
+      {search.length > 0 ? <h1> You&apos;ve search keyword for {search}</h1> : null}
+      <input
+        type="text"
+        placeholder="Search users..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <label>Filter by gender: </label>
       <select
         id="gender-select"
@@ -39,9 +59,13 @@ export default function UsersList({ page }: { page: number }) {
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
-      {filteredData?.map((user) => (
+      {/* NO USER FOUND */}
+      {filteredData.length === 0 && <h1>No user found</h1>}
+      {/* RENDER DATA */}
+      {filteredData?.map((user: TUser) => (
         <div key={user.id}>{user.firstName}</div>
       ))}
+      {isFetching && <p>Updating...</p>}
       <div>
         <button onClick={() => handleGoToPage(page - 1)} disabled={page === 1}>
           Prev
