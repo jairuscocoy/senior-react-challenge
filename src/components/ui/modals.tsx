@@ -57,17 +57,19 @@ export const UserModal = ({ user, onClose }: TUserModal) => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500 uppercase">Username</p>
-              <p className="text-sm font-semibold text-green-600">{user.username}</p>
-            </div>
-            <ModalDetail label="Gender" value={user.gender} />
+            <ModalDetail label="Username" value={user.username} />
+            <ModalDetail label="Phone No." value={user.phone} />
           </div>
-          <div className="grid">
+          <div className="grid gap-4">
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-500 uppercase">Email</p>
+              <p className="text-sm font-semibold text-green-600">{user.email}</p>
+            </div>
             <ModalDetail
               label="Address"
               value={`${user.address?.address}, ${user.address?.city}`}
             />
+            <ModalDetail label="Company" value={user?.company?.name || "N/A"} />
           </div>
         </div>
 
