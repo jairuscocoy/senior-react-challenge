@@ -7,5 +7,6 @@ export function useSearchUsers(query: string, page: number) {
     queryFn: () => searchUsers(query, page),
     enabled: !!query,
     placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
   });
 }

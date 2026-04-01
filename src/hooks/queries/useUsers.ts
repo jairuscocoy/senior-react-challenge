@@ -10,5 +10,6 @@ export const useUsers = (page: number) => {
     placeholderData: keepPreviousData,
     staleTime: 5000,
     retry: 1,
+    refetchOnWindowFocus: false,
   });
 };
