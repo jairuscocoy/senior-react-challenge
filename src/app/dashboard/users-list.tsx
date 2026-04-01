@@ -108,7 +108,9 @@ export default function UsersList({ page }: { page: number }) {
         </select>
       </div>
       {/* NO USER FOUND */}
-      {filteredData.length === 0 && <h1>No user found</h1>}
+      {filteredData.length === 0 && (
+        <p className="font-bold text-red-500 text-4xl">No user found</p>
+      )}
       {/* MODAL HERE */}
       {isModalOpen && <UserModal user={selectedUser} onClose={closeModal} />}
       {/* RENDER DATA */}
@@ -142,30 +144,32 @@ export default function UsersList({ page }: { page: number }) {
       {isFetching ? (
         <Spinner />
       ) : (
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 w-1/3">
-          <Button
-            variant="secondary"
-            onClick={() => handleGoToPage(page - 1)}
-            disabled={page === 1}
-            className="text-sm"
-          >
-            <ArrowLeftIcon />
-            Prev
-          </Button>
-          <span className="text-sm font-medium text-slate-500">
-            Page <span className="text-slate-900">{page}</span> of{" "}
-            <span className="text-slate-900">{totalPages}</span>
-          </span>
-          <Button
-            variant="primary"
-            onClick={() => handleGoToPage(page + 1)}
-            disabled={page === totalPages}
-            className="text-sm"
-          >
-            Next
-            <ArrowRightIcon />
-          </Button>
-        </div>
+        totalPages > 0 && (
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 w-1/3">
+            <Button
+              variant="secondary"
+              onClick={() => handleGoToPage(page - 1)}
+              disabled={page === 1}
+              className="text-sm"
+            >
+              <ArrowLeftIcon />
+              Prev
+            </Button>
+            <span className="text-sm font-medium text-slate-500">
+              Page <span className="text-slate-900">{page}</span> of{" "}
+              <span className="text-slate-900">{totalPages}</span>
+            </span>
+            <Button
+              variant="primary"
+              onClick={() => handleGoToPage(page + 1)}
+              disabled={page === totalPages}
+              className="text-sm"
+            >
+              Next
+              <ArrowRightIcon />
+            </Button>
+          </div>
+        )
       )}
     </div>
   );
