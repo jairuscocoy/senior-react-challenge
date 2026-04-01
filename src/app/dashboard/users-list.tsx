@@ -23,7 +23,7 @@ export default function UsersList({ page }: { page: number }) {
   const debouncedSearch = useDebounce(search, 500);
   const searchResults = useSearchUsers(debouncedSearch, page);
   const allUsersResults = useUsers(page);
-  const { data, isLoading, isSuccess, isFetching } = debouncedSearch
+  const { data, isLoading, isSuccess, isFetching, isError, refetch } = debouncedSearch
     ? searchResults
     : allUsersResults;
 
@@ -54,6 +54,19 @@ export default function UsersList({ page }: { page: number }) {
 
   if (isLoading) return <Spinner />;
 
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center p-8 border-2 border-red-100 rounded-xl bg-red-50">
+        <p className="text-red-600 font-medium mb-4">Something went wrong</p>
+        <button
+          onClick={() => refetch()}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
   const totalPages = Math.ceil((data?.total ?? 0) / 10);
 
   const handleGoToPage = (newPage: number) => {

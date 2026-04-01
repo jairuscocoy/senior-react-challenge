@@ -7,11 +7,14 @@ type TGetUsersResponse = {
   limit: number;
 };
 const limit = 10;
+const TIMEOUT_MS = 8000;
 
 //get all user
 export const getUsers = async (page: number): Promise<TGetUsersResponse> => {
   const skip = (page - 1) * limit;
-  const res = await fetch(`https://dummyjson.com/users?limit=${limit}&skip=${skip}`);
+  const res = await fetch(`https://dummyjson.com/users?limit=${limit}&skip=${skip}`, {
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
 
   if (!res.ok) throw new Error("Failed to fetch users");
 
@@ -21,7 +24,9 @@ export const getUsers = async (page: number): Promise<TGetUsersResponse> => {
 //search user
 export const searchUsers = async (q: string, page: number) => {
   const skip = (page - 1) * limit;
-  const res = await fetch(`https://dummyjson.com/users/search?q=${q}&limit=${limit}&skip=${skip}`);
+  const res = await fetch(`https://dummyjson.com/users/search?q=${q}&limit=${limit}&skip=${skip}`, {
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
 
   if (!res.ok) throw new Error("Failed to fetch users");
 
